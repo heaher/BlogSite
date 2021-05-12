@@ -6,6 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
 from django.contrib import auth
+import os.path
+import uuid
 from django.conf import settings
 
 # Create your models here.
@@ -25,6 +27,12 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+def get_image_path(self, filename):
+
+    prefix = 'post_images/'
+    name = str(uuid.uuid4()).replace('-', '')
+    extension = os.path.splitext(filename)[-1]
+    return prefix + name + extension
 
 class Post(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
@@ -35,7 +43,7 @@ class Post(models.Model):
     username = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(
-        upload_to='post_images/', null=True, blank=True)
+        upload_to=get_image_path, null=True, blank=True)
     class Meta:
         ordering = ['-id']
 
