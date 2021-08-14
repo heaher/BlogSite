@@ -12,8 +12,8 @@ phases:
       python: 3.8
     commands:
       - yum update -y
-      - yum install https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
-      - yum install mysql-server
+      - yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+      - yum -y install mysql-server
       - service mysql start
       - mysql -p${DB_ROOT_PASSWORD} -e "create database project;"
       - mysql -p${DB_ROOT_PASSWORD} -e "GRANT ALL ON *.* TO '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';"
