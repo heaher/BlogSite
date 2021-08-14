@@ -1,0 +1,30 @@
+version: '3'       
+services:          
+  db:
+    image: mysql:8.0.4    
+    container_name: db
+    environment:    
+      MYSQL_ROOT_PASSWORD: root #ルートユーザのパスワード←windowsのGUI環境で求められるPWはこれ
+      MYSQL_DATABASE: blog
+      MYSQL_USER: root　
+      MYSQL_PASSWORD: owata777
+      TZ: 'Asia/Tokyo'
+    volumes: 
+            - ./mysql-confd:/etc/mysql/conf.d
+            - ./db/data:/var/lib/mysql #mysqlのデータをローカル環境へ残す。
+    ports: 
+                - 3306:3306
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+                                  
+  web:
+    build: .       
+    container_name: web
+    volumes:                  
+      - ./source:/code
+    ports:                    
+      - "8000:8000"
+      - "80:80"
+    
+    tty: true
+    depends_on:               
+      - db

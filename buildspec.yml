@@ -1,0 +1,25 @@
+version: 0.2
+
+env:
+  variables:
+    DB_ROOT_PASSWORD: password
+    DB_HOST: localhost
+    DB_USER: mysql
+    DB_PASSWORD: password
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - yum update -y
+      - yum install -y mysql-server-8.0.2
+      - service mysql start
+      - mysql -p${DB_ROOT_PASSWORD} -e "create database project;"
+      - mysql -p${DB_ROOT_PASSWORD} -e "GRANT ALL ON *.* TO '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';"
+      - echo "mysql-server mysql-server/root_password password ${DB_ROOT_PASSWORD}" |debconf-set-selections
+      - echo "mysql-server mysql-server/root_password_again password ${DB_ROOT_PASSWORD}" |debconf-set-selections
+      - pip install -r requirements.txt
+      - python project/manage.py migrate
+  build:
+    commands:
+      - python project/manage.py test app.tests
